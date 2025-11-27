@@ -25,9 +25,9 @@ let package = Package(
         .library(name: .rfc4007, targets: [.rfc4007]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-rfc-5952", from: "0.1.0"),
+        .package(path: "../swift-rfc-5952"),
         .package(url: "https://github.com/swift-standards/swift-standards", from: "0.1.0"),
-        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.1.0"),
+        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.5.0"),
     ],
     targets: [
         .target(
@@ -41,3 +41,11 @@ let package = Package(
     ],
     swiftLanguageModes: [.v6]
 )
+
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility")
+    ]
+}
