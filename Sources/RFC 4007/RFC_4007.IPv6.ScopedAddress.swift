@@ -15,9 +15,7 @@
 //
 // IPv6 Scoped Address with Zone Identifier
 
-import INCITS_4_1986
-import RFC_5952
-import Standards
+public import INCITS_4_1986
 
 extension RFC_4007.IPv6 {
     /// IPv6 Scoped Address (RFC 4007)
@@ -55,7 +53,7 @@ extension RFC_4007.IPv6 {
     ///
     /// print(String(unscoped))  // "2001:db8::1"
     /// ```
-    public struct ScopedAddress: Hashable, Sendable {
+    public struct ScopedAddress: Hashable, Sendable, Codable {
         /// The IPv6 address
         public let address: RFC_4291.IPv6.Address
 
@@ -67,6 +65,17 @@ extension RFC_4007.IPv6 {
         /// `nil` indicates the address doesn't require a zone identifier
         /// (e.g., global addresses).
         public let zone: String?
+
+        /// Creates value WITHOUT validation
+        ///
+        /// **Warning**: Bypasses RFC validation. Only use for:
+        /// - Static constants
+        /// - Pre-validated values
+        /// - Internal construction after validation
+        init(__unchecked: Void, address: RFC_4291.IPv6.Address, zone: String?) {
+            self.address = address
+            self.zone = zone
+        }
 
         /// Creates a scoped IPv6 address
         ///
@@ -168,7 +177,77 @@ extension String {
     ) {
         // Compose through canonical byte representation
         // ASCII ⊂ UTF-8, so this is always valid
-        self.init(decoding: [UInt8](ascii: scopedAddress), as: UTF8.self)
+        self.init(decoding: [UInt8](scopedAddress), as: UTF8.self)
+    }
+}
+
+// MARK: - UInt8.ASCII.Serializable
+
+extension RFC_4007.IPv6.ScopedAddress: UInt8.ASCII.Serializable {
+    public typealias Context = Void
+
+    /// Creates a scoped IPv6 address from ASCII bytes
+    ///
+    /// Parses RFC 4007 format: `<address>%<zone_id>`
+    ///
+    /// ## Category Theory
+    ///
+    /// Parsing transformation:
+    /// - **Domain**: [UInt8] (ASCII bytes)
+    /// - **Codomain**: RFC_4007.IPv6.ScopedAddress (structured data)
+    ///
+    /// String parsing is derived composition:
+    /// ```
+    /// String → [UInt8] (UTF-8) → ScopedAddress
+    /// ```
+    ///
+    /// ## Examples
+    ///
+    /// ```swift
+    /// // With zone identifier
+    /// let bytes1 = Array("fe80::1%eth0".utf8)
+    /// let scoped1 = try RFC_4007.IPv6.ScopedAddress(ascii: bytes1)
+    ///
+    /// // Without zone identifier
+    /// let bytes2 = Array("2001:db8::1".utf8)
+    /// let scoped2 = try RFC_4007.IPv6.ScopedAddress(ascii: bytes2)
+    /// ```
+    public init<Bytes: Collection>(ascii bytes: Bytes, in context: Context = ()) throws(Error)
+    where Bytes.Element == UInt8 {
+        guard !bytes.isEmpty else { throw Error.empty }
+
+        // Find the '%' separator
+        if let percentIndex = bytes.firstIndex(of: UInt8.ascii.percentSign) {
+            // Split address and zone
+            let addressBytes = bytes[..<percentIndex]
+            let zoneBytes = bytes[bytes.index(after: percentIndex)...]
+
+            guard !addressBytes.isEmpty else { throw Error.missingAddress }
+            guard !zoneBytes.isEmpty else { throw Error.missingZone }
+
+            // Parse address using RFC 5952
+            let address: RFC_4291.IPv6.Address
+            do {
+                address = try RFC_4291.IPv6.Address(ascii: addressBytes)
+            } catch let error as RFC_4291.IPv6.Address.Error {
+                throw Error.invalidAddress(error)
+            }
+
+            // Zone is just a string - validate it's valid UTF-8
+            let zone = String(decoding: zoneBytes, as: UTF8.self)
+
+            self.init(__unchecked: (), address: address, zone: zone)
+        } else {
+            // No zone identifier - just an address
+            let address: RFC_4291.IPv6.Address
+            do {
+                address = try RFC_4291.IPv6.Address(ascii: bytes)
+            } catch let error as RFC_4291.IPv6.Address.Error {
+                throw Error.invalidAddress(error)
+            }
+
+            self.init(__unchecked: (), address: address, zone: nil)
+        }
     }
 }
 
