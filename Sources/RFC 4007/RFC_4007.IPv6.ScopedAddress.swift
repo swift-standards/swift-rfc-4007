@@ -181,10 +181,20 @@ extension String {
     }
 }
 
-// MARK: - UInt8.ASCII.Serializable
-
 extension RFC_4007.IPv6.ScopedAddress: UInt8.ASCII.Serializable {
     public typealias Context = Void
+
+    public static func serialize<Buffer: RangeReplaceableCollection>(
+        ascii scopedAddress: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == UInt8 {
+        buffer.append(ascii: scopedAddress.address)
+        if let zone = scopedAddress.zone {
+            // RFC 4007 Section 11.7: Format is <address>%<zone_id>
+            buffer.append(.ascii.percentSign)
+            buffer.append(contentsOf: zone.utf8)
+        }
+    }
 
     /// Creates a scoped IPv6 address from ASCII bytes
     ///
@@ -229,7 +239,7 @@ extension RFC_4007.IPv6.ScopedAddress: UInt8.ASCII.Serializable {
             let address: RFC_4291.IPv6.Address
             do {
                 address = try RFC_4291.IPv6.Address(ascii: addressBytes)
-            } catch let error as RFC_4291.IPv6.Address.Error {
+            } catch {
                 throw Error.invalidAddress(error)
             }
 
@@ -242,7 +252,7 @@ extension RFC_4007.IPv6.ScopedAddress: UInt8.ASCII.Serializable {
             let address: RFC_4291.IPv6.Address
             do {
                 address = try RFC_4291.IPv6.Address(ascii: bytes)
-            } catch let error as RFC_4291.IPv6.Address.Error {
+            } catch {
                 throw Error.invalidAddress(error)
             }
 
