@@ -181,7 +181,7 @@ extension String {
     }
 }
 
-extension RFC_4007.IPv6.ScopedAddress: UInt8.ASCII.Serializable {
+extension RFC_4007.IPv6.ScopedAddress: Binary.ASCII.Serializable {
     public typealias Context = Void
 
     public static func serialize<Buffer: RangeReplaceableCollection>(
