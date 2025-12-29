@@ -13,7 +13,7 @@
 // RFC_4007.IPv6.ScopedAddress.Error.swift
 // swift-rfc-4007
 
-public import INCITS_4_1986
+import INCITS_4_1986
 
 extension RFC_4007.IPv6.ScopedAddress {
     public enum Error: Swift.Error, Sendable, Equatable {

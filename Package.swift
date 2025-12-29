@@ -19,15 +19,15 @@ let package = Package(
         .macOS(.v26),
         .iOS(.v26),
         .tvOS(.v26),
-        .watchOS(.v26)
+        .watchOS(.v26),
     ],
     products: [
-        .library(name: .rfc4007, targets: [.rfc4007]),
+        .library(name: .rfc4007, targets: [.rfc4007])
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-rfc-5952", from: "0.1.3"),
-        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.10.0"),
-        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.6.3"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-5952", from: "0.1.4"),
+        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.21.0"),
+        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.7.1"),
     ],
     targets: [
         .target(
@@ -43,9 +43,10 @@ let package = Package(
 )
 
 for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
-    target.swiftSettings = (target.swiftSettings ?? []) + [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("MemberImportVisibility")
-    ]
+    target.swiftSettings =
+        (target.swiftSettings ?? []) + [
+            .enableUpcomingFeature("ExistentialAny"),
+            .enableUpcomingFeature("InternalImportsByDefault"),
+            .enableUpcomingFeature("MemberImportVisibility"),
+        ]
 }
