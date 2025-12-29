@@ -177,7 +177,7 @@ extension String {
     ) {
         // Compose through canonical byte representation
         // ASCII ⊂ UTF-8, so this is always valid
-        self.init(decoding: [UInt8](scopedAddress), as: UTF8.self)
+        self.init(ascii: scopedAddress)
     }
 }
 
