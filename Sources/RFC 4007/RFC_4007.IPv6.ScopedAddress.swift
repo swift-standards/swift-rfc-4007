@@ -116,7 +116,7 @@ extension RFC_4007.IPv6.ScopedAddress {
     ///
     /// Global addresses and loopback don't require zone identifiers.
     public var requiresZone: Bool {
-        address.isLinkLocal || address.isUniqueLocal
+        address.is.linkLocal || address.is.uniqueLocal
     }
 
     /// Whether this is a properly scoped address
