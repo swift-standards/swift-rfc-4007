@@ -27,7 +27,7 @@
 // RFC 4007 is essential for proper IPv6 implementation as it resolves
 // ambiguity when multiple interfaces exist with the same link-local prefix.
 
-import INCITS_4_1986
+import ASCII
 
 /// RFC 4007: IPv6 Scoped Address Architecture
 ///

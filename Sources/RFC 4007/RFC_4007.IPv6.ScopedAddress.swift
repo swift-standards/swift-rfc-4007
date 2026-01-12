@@ -15,7 +15,7 @@
 //
 // IPv6 Scoped Address with Zone Identifier
 
-public import INCITS_4_1986
+public import ASCII
 
 extension RFC_4007.IPv6 {
     /// IPv6 Scoped Address (RFC 4007)
