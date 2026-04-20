@@ -20,8 +20,8 @@ struct RFC4007Tests {
 
     // MARK: - Basic Construction
 
-    @Test("ScopedAddress initialization with zone")
-    func initWithZone() throws {
+    @Test
+    func `ScopedAddress initialization with zone`() throws {
         let address = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth0")
 
@@ -29,8 +29,8 @@ struct RFC4007Tests {
         #expect(scoped.zone == "eth0")
     }
 
-    @Test("ScopedAddress initialization without zone")
-    func initWithoutZone() throws {
+    @Test
+    func `ScopedAddress initialization without zone`() throws {
         let address = RFC_4291.IPv6.Address(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: address, zone: nil)
 
@@ -38,16 +38,16 @@ struct RFC4007Tests {
         #expect(scoped.zone == nil)
     }
 
-    @Test("ScopedAddress default zone is nil")
-    func defaultZoneIsNil() throws {
+    @Test
+    func `ScopedAddress default zone is nil`() throws {
         let address = RFC_4291.IPv6.Address(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: address)
 
         #expect(scoped.zone == nil)
     }
 
-    @Test("ScopedAddress accepts StringProtocol types")
-    func acceptsStringProtocol() throws {
+    @Test
+    func `ScopedAddress accepts StringProtocol types`() throws {
         let address = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
 
         // Test with Substring
@@ -66,8 +66,8 @@ struct RFC4007Tests {
 
     // MARK: - Zone Requirements
 
-    @Test("Link-local addresses require zone")
-    func linkLocalRequiresZone() throws {
+    @Test
+    func `Link-local addresses require zone`() throws {
         let linkLocal = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: linkLocal)
 
@@ -75,8 +75,8 @@ struct RFC4007Tests {
         #expect(scoped.isProperlyScoped == false)  // No zone provided
     }
 
-    @Test("Link-local with zone is properly scoped")
-    func linkLocalWithZone() throws {
+    @Test
+    func `Link-local with zone is properly scoped`() throws {
         let linkLocal = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: linkLocal, zone: "eth0")
 
@@ -84,8 +84,8 @@ struct RFC4007Tests {
         #expect(scoped.isProperlyScoped == true)
     }
 
-    @Test("Unique local addresses require zone")
-    func uniqueLocalRequiresZone() throws {
+    @Test
+    func `Unique local addresses require zone`() throws {
         let ula = RFC_4291.IPv6.Address(0xfc00, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: ula)
 
@@ -93,8 +93,8 @@ struct RFC4007Tests {
         #expect(scoped.isProperlyScoped == false)
     }
 
-    @Test("Global addresses don't require zone")
-    func globalNoZoneRequired() throws {
+    @Test
+    func `Global addresses don't require zone`() throws {
         let global = RFC_4291.IPv6.Address(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: global)
 
@@ -102,8 +102,8 @@ struct RFC4007Tests {
         #expect(scoped.isProperlyScoped == true)  // No zone needed
     }
 
-    @Test("Loopback doesn't require zone")
-    func loopbackNoZoneRequired() throws {
+    @Test
+    func `Loopback doesn't require zone`() throws {
         let loopback = RFC_4291.IPv6.Address.loopback
         let scoped = RFC_4007.IPv6.ScopedAddress(address: loopback)
 
@@ -113,8 +113,8 @@ struct RFC4007Tests {
 
     // MARK: - String Representation (RFC 4007 Section 11.7)
 
-    @Test("RFC 4007 Section 11.7: Link-local with zone string format")
-    func linkLocalStringFormat() throws {
+    @Test
+    func `RFC 4007 Section 11.7: Link-local with zone string format`() throws {
         let linkLocal = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: linkLocal, zone: "eth0")
 
@@ -122,8 +122,8 @@ struct RFC4007Tests {
         #expect(text == "fe80::1%eth0")
     }
 
-    @Test("RFC 4007 Section 11.7: Numeric zone ID")
-    func numericZoneID() throws {
+    @Test
+    func `RFC 4007 Section 11.7: Numeric zone ID`() throws {
         let linkLocal = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: linkLocal, zone: "1")
 
@@ -131,8 +131,8 @@ struct RFC4007Tests {
         #expect(text == "fe80::1%1")
     }
 
-    @Test("Global address without zone")
-    func globalAddressNoZone() throws {
+    @Test
+    func `Global address without zone`() throws {
         let global = RFC_4291.IPv6.Address(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: global)
 
@@ -141,8 +141,8 @@ struct RFC4007Tests {
         #expect(!text.contains("%"))
     }
 
-    @Test("Global address with zone (unusual but allowed)")
-    func globalAddressWithZone() throws {
+    @Test
+    func `Global address with zone (unusual but allowed)`() throws {
         let global = RFC_4291.IPv6.Address(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: global, zone: "eth0")
 
@@ -150,8 +150,8 @@ struct RFC4007Tests {
         #expect(text == "2001:db8::1%eth0")
     }
 
-    @Test("Unspecified address without zone")
-    func unspecifiedNoZone() throws {
+    @Test
+    func `Unspecified address without zone`() throws {
         let unspecified = RFC_4291.IPv6.Address.unspecified
         let scoped = RFC_4007.IPv6.ScopedAddress(address: unspecified)
 
@@ -159,8 +159,8 @@ struct RFC4007Tests {
         #expect(text == "::")
     }
 
-    @Test("CustomStringConvertible description")
-    func customStringConvertible() throws {
+    @Test
+    func `CustomStringConvertible description`() throws {
         let linkLocal = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: linkLocal, zone: "eth0")
 
@@ -169,8 +169,8 @@ struct RFC4007Tests {
 
     // MARK: - Equality & Hashing
 
-    @Test("Equality with same address and zone")
-    func equalitySame() throws {
+    @Test
+    func `Equality with same address and zone`() throws {
         let address = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped1 = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth0")
         let scoped2 = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth0")
@@ -178,8 +178,8 @@ struct RFC4007Tests {
         #expect(scoped1 == scoped2)
     }
 
-    @Test("Inequality with different zones")
-    func inequalityDifferentZone() throws {
+    @Test
+    func `Inequality with different zones`() throws {
         let address = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped1 = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth0")
         let scoped2 = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth1")
@@ -187,8 +187,8 @@ struct RFC4007Tests {
         #expect(scoped1 != scoped2)
     }
 
-    @Test("Inequality with zone vs no zone")
-    func inequalityZoneVsNone() throws {
+    @Test
+    func `Inequality with zone vs no zone`() throws {
         let address = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let scoped1 = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth0")
         let scoped2 = RFC_4007.IPv6.ScopedAddress(address: address, zone: nil)
@@ -196,8 +196,8 @@ struct RFC4007Tests {
         #expect(scoped1 != scoped2)
     }
 
-    @Test("Hashable allows use in Set")
-    func hashableInSet() throws {
+    @Test
+    func `Hashable allows use in Set`() throws {
         let address1 = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 1)
         let address2 = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0, 0, 0, 2)
 
@@ -215,8 +215,8 @@ struct RFC4007Tests {
 
     // MARK: - Real-World Examples
 
-    @Test("Link-local on multiple interfaces")
-    func multipleInterfaces() throws {
+    @Test
+    func `Link-local on multiple interfaces`() throws {
         let address = RFC_4291.IPv6.Address(0xfe80, 0, 0, 0, 0x0200, 0x5eff, 0xfe00, 0x0001)
 
         let eth0 = RFC_4007.IPv6.ScopedAddress(address: address, zone: "eth0")
@@ -227,8 +227,8 @@ struct RFC4007Tests {
         #expect(eth0 != eth1)  // Different zones distinguish them
     }
 
-    @Test("Multicast with zone")
-    func multicastWithZone() throws {
+    @Test
+    func `Multicast with zone`() throws {
         // ff02::1 (all nodes link-local multicast)
         let multicast = RFC_4291.IPv6.Address(0xff02, 0, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: multicast, zone: "eth0")
@@ -236,8 +236,8 @@ struct RFC4007Tests {
         #expect(String(scoped) == "ff02::1%eth0")
     }
 
-    @Test("Documentation address (global scope)")
-    func documentationAddress() throws {
+    @Test
+    func `Documentation address (global scope)`() throws {
         let docs = RFC_4291.IPv6.Address(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
         let scoped = RFC_4007.IPv6.ScopedAddress(address: docs)
 
